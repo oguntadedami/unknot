@@ -12,6 +12,9 @@ function App() {
   const [result, setResult] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  
+  // New state for complexity toggle
+  const [complexity, setComplexity] = useState('standard')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -25,10 +28,19 @@ function App() {
   if (!session) return <Auth />
   if (view === 'dashboard') return <Dashboard session={session} onBack={() => setView('home')} />
 
+  // Updated fetchExplanation to handle complexity levels
   const fetchExplanation = async (searchTerm) => {
     setLoading(true)
     setError('')
     setResult('')
+
+    // Define prompt adjustments based on complexity
+    let complexityAdjustment = ""
+    if (complexity === 'simpler') {
+      complexityAdjustment = "\n\n️ ADJUSTMENT: Explain this like I'm 12. Use even simpler words, shorter sentences, and a very basic analogy."
+    } else if (complexity === 'deeper') {
+      complexityAdjustment = "\n\n⚙️ ADJUSTMENT: Go deeper. Include one technical detail or historical context that a curious learner would appreciate."
+    }
 
     try {
       const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -71,7 +83,8 @@ Tone rules:
 - If something is genuinely complicated, say so — but still explain it
 - NEVER use "simply", "just", or "basically" — they're condescending
 - Keep total length 180–230 words
-- If the user asks something vague, pick the most common interpretation and explain it, then ask if they meant something else`
+- If the user asks something vague, pick the most common interpretation and explain it, then ask if they meant something else
+${complexityAdjustment}`
             },
             { 
               role: "user", 
@@ -96,6 +109,8 @@ Tone rules:
   const handleUnknot = (e) => {
     e.preventDefault()
     if (!topic.trim()) return
+    // Reset complexity to standard when searching for a new term
+    setComplexity('standard')
     fetchExplanation(topic)
   }
 
@@ -119,6 +134,13 @@ Tone rules:
     await supabase.auth.signOut()
     setResult('')
     setTopic('')
+  }
+
+  // Helper to handle depth toggle from child component
+  const handleDepthChange = (newLevel) => {
+    setComplexity(newLevel)
+    // Re-fetch the current topic with the new complexity
+    fetchExplanation(topic)
   }
 
   return (
@@ -192,9 +214,12 @@ Tone rules:
             text={result}
             topic={topic}
             userEmail={session.user.email}
+            session={session} // Pass session for feedback
             onTopicClick={(term) => { setTopic(term); fetchExplanation(term) }}
             onSave={handleSave}
             isSaving={saving}
+            complexity={complexity}
+            onDepthChange={handleDepthChange}
           />
         )}
       </div>
