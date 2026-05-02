@@ -122,52 +122,71 @@ Tone rules:
   }
 
   return (
-    <div className="min-h-screen bg-knot-cream p-4 sm:p-8">
-      <header className="w-full max-w-2xl mx-auto flex justify-between items-center mb-12">
-        <h1 className="font-display font-extrabold text-4xl sm:text-5xl tracking-tighter uppercase">
+    // Main Background: Cream (from brand guide)
+    <div className="min-h-screen bg-knot-cream p-4 sm:p-8 font-body text-knot-black">
+      
+      {/* Header: Responsive Flex - Stacks on mobile, row on desktop */}
+      <header className="w-full max-w-2xl mx-auto flex flex-col sm:flex-row justify-between items-center mb-8 sm:mb-12 gap-4">
+        
+        {/* Logo */}
+        <h1 className="font-display font-extrabold text-5xl tracking-tighter uppercase text-center sm:text-left">
           U<span className="text-knot-yellow">N</span>KNOT
         </h1>
-        <div className="flex items-center gap-4">
+        
+        {/* Navigation Buttons */}
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-end">
           <button
             onClick={() => setView('dashboard')}
-            className="hidden sm:block px-4 py-2 bg-white border-3 border-knot-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-mono text-xs uppercase font-bold"
+            className="px-4 py-2 bg-white border-[3px] border-knot-black shadow-[4px_4px_0px_0px_black] 
+                       hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] 
+                       transition-all font-mono text-xs uppercase font-bold whitespace-nowrap"
           >
-            My Library
+             My Library
           </button>
           <button
             onClick={handleLogout}
-            className="text-knot-black hover:text-knot-pink font-mono text-xs uppercase font-bold"
+            className="text-knot-black hover:text-knot-pink font-mono text-xs uppercase font-bold whitespace-nowrap border-b-2 border-transparent hover:border-knot-black"
           >
             Log Out ↗
           </button>
         </div>
       </header>
 
+      {/* Main Content Area */}
       <div className="w-full max-w-2xl mx-auto">
-        <form onSubmit={handleUnknot} className="relative mb-12">
+        
+        {/* Search Form */}
+        <form onSubmit={handleUnknot} className="relative mb-8 sm:mb-12">
           <input
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="TYPE A TECH TERM..."
-            className="w-full p-5 bg-white border-3 border-knot-black shadow-neo focus:outline-none focus:shadow-neo-hover focus:translate-x-[-2px] focus:translate-y-[-2px] transition-all font-display text-xl placeholder:font-body placeholder:text-slate-400 placeholder:text-lg"
+            className="w-full p-5 bg-white border-[3px] border-knot-black shadow-[6px_6px_0px_0px_black] 
+                       focus:outline-none focus:shadow-[8px_8px_0px_0px_black] focus:translate-x-[-2px] focus:translate-y-[-2px] 
+                       transition-all font-display text-xl placeholder:font-body placeholder:text-slate-400 placeholder:text-lg"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={loading || !topic.trim()}
-            className="absolute right-3 top-3 bottom-3 px-6 bg-knot-yellow border-3 border-knot-black shadow-neo-sm font-display font-bold uppercase text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute right-3 top-3 bottom-3 px-6 bg-knot-yellow border-[3px] border-knot-black shadow-[4px_4px_0px_0px_black] 
+                       font-display font-bold uppercase text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none 
+                       active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all 
+                       disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? '...' : 'UN-KNOT ↗'}
           </button>
         </form>
 
+        {/* Error Message */}
         {error && (
-          <div className="bg-knot-pink border-3 border-knot-black p-4 shadow-neo font-mono text-sm mb-8">
+          <div className="bg-knot-pink border-[3px] border-knot-black shadow-[6px_6px_0px_0px_black] p-4 font-mono text-sm mb-8">
             ERROR: {error}
           </div>
         )}
 
+        {/* Results Box */}
         {result && (
           <ExplanationBox
             text={result}
